@@ -54,7 +54,11 @@
   }
 
   function addUpgradeHeader() {
-    if (document.getElementById('upgrade-header')) return;
+    var existing = document.getElementById('upgrade-header');
+    if (existing) {
+      existing.style.removeProperty('display');
+      return;
+    }
     var logoClubRows = findRowsByName('front name & logo');
     if (!logoClubRows.length) return;
     var firstRow = logoClubRows[0];
@@ -64,6 +68,11 @@
     header.style.cssText = 'text-align:center; padding:8px 16px; font-size:13px; font-weight:bold; color:#555; margin-top:4px;';
     header.textContent = 'Want to personalise your shirt? Upgrade below 👇';
     firstRow.parentNode.insertBefore(header, firstRow);
+  }
+
+  function hideUpgradeHeader() {
+    var header = document.getElementById('upgrade-header');
+    if (header) header.style.setProperty('display','none','important');
   }
 
   function repositionUpgradeRow() {
@@ -89,12 +98,17 @@
 
   function styleLogoClubRows() {
     findRowsByName('front name & logo').forEach(function(r) {
-      r.style.background = '#EEF4FF';
-      r.style.borderLeft = '3px solid #378ADD';
+      r.style.background = '#F5A623';
+      r.style.borderLeft = '3px solid #C47D0E';
       var n = r.querySelector('.elProductCardInfoName');
-      if (n) n.innerHTML = '👑 BOWLING TALK T-SHIRT CLUB <span style="background:#F5A623;color:#7D4E00;font-size:10px;font-weight:bold;padding:2px 8px;border-radius:4px;margin-left:6px;vertical-align:middle;">MOST POPULAR</span>';
+      if (n) n.innerHTML = '👑 BOWLING TALK T-SHIRT CLUB <span style="background:#7D4E00;color:#FFF8ED;font-size:10px;font-weight:bold;padding:2px 8px;border-radius:4px;margin-left:6px;vertical-align:middle;">MOST POPULAR</span>';
       var desc = r.querySelector('.elProductCardInfoDescription');
-      if (desc) desc.textContent = 'Get your first shirt for $17.95 - includes your name + logo on the front! Then just $34.95/month (plus s+h) for a new top voted design every month.';
+      if (desc) {
+        desc.textContent = 'Get your first shirt for $17.95 - includes your name + logo on the front! Then just $34.95/month (plus s+h) for a new top voted design every month.';
+        desc.style.color = '#3D2800';
+      }
+      var price = r.querySelector('.elProductCardFinalPrice');
+      if (price) price.style.color = '#3D2800';
     });
   }
 
@@ -144,8 +158,7 @@
       hideRows(oneOffLogoRows);
       showRows(logoClubRows);
       styleLogoClubRows();
-      var header = document.getElementById('upgrade-header');
-      if (header) header.style.setProperty('display','none','important');
+      hideUpgradeHeader();
       return;
     }
 
@@ -155,16 +168,13 @@
       hideRows(oneOffLogoRows);
       styleLogoClubRows();
       addUpgradeHeader();
-      var header = document.getElementById('upgrade-header');
-      if (header) header.style.removeProperty('display');
       return;
     }
 
     if (oneOffSelected && !clubSelected && !logoClubSelected) {
       showRows(standardRows);
       hideRows(logoClubRows);
-      var header = document.getElementById('upgrade-header');
-      if (header) header.style.setProperty('display','none','important');
+      hideUpgradeHeader();
       if (!isFront) showRows(oneOffLogoRows);
       return;
     }
@@ -172,8 +182,7 @@
     showRows(standardRows);
     hideRows(logoClubRows);
     hideRows(oneOffLogoRows);
-    var header = document.getElementById('upgrade-header');
-    if (header) header.style.setProperty('display','none','important');
+    hideUpgradeHeader();
   }
 
   function shirtQty() {
