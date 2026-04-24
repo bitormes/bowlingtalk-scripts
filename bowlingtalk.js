@@ -97,12 +97,12 @@
   }
 
   function styleStandardClubRows() {
-    findRowsByName('bowling talk t-shirt club').forEach(function(r) {
+    document.querySelectorAll('[data-page-element="CheckoutProductCard/V2"]').forEach(function(r) {
       var n = r.querySelector('.elProductCardInfoName');
       if (!n) return;
-      if (n.textContent.toLowerCase().includes('front name')) return;
-      if (n.textContent.toLowerCase().includes('personalisation')) return;
-      if (n.textContent.toLowerCase().includes('want your')) return;
+      var text = n.textContent.toLowerCase();
+      if (!text.includes('bowling talk t-shirt club')) return;
+      if (text.includes('front name')) return;
       n.innerHTML = 'BOWLING TALK T-SHIRT CLUB <span style="background:#378ADD;color:white;font-size:10px;font-weight:bold;padding:2px 8px;border-radius:4px;margin-left:6px;vertical-align:middle;">MOST POPULAR</span>';
     });
   }
@@ -112,7 +112,7 @@
       r.style.background = '#FFD580';
       r.style.borderLeft = '3px solid #C47D0E';
       var n = r.querySelector('.elProductCardInfoName');
-      if (n) n.innerHTML = '👑 WANT YOUR NAME ON THE FRONT?';
+      if (n) n.innerHTML = '&#x27A1;&#xFE0F; WANT YOUR NAME ON THE FRONT?';
       var desc = r.querySelector('.elProductCardInfoDescription');
       if (desc) {
         desc.textContent = 'Go personalised for $17.95 - includes your name + logo on the front! Then just $34.95/month (plus s+h) for a new top voted design every month.';
@@ -123,12 +123,33 @@
     });
   }
 
+  function getStandardClubRows() {
+    var result = [];
+    document.querySelectorAll('[data-page-element="CheckoutProductCard/V2"]').forEach(function(c) {
+      var n = c.querySelector('.elProductCardInfoName');
+      if (!n) return;
+      var text = n.textContent.toLowerCase();
+      if (text.includes('bowling talk t-shirt club') && !text.includes('front name')) {
+        result.push(c);
+      }
+    });
+    return result;
+  }
+
+  function getLogoClubRows() {
+    return findRowsByName('front name & logo');
+  }
+
+  function getOneOffLogoRows() {
+    return findRowsByName('premium front logo');
+  }
+
   function isClubSelected() {
-    return getQty(findRowsByName('bowling talk t-shirt club')) > 0;
+    return getQty(getStandardClubRows()) > 0;
   }
 
   function isLogoClubSelected() {
-    return getQty(findRowsByName('front name & logo')) > 0;
+    return getQty(getLogoClubRows()) > 0;
   }
 
   function isOneOffSelected() {
@@ -137,9 +158,10 @@
     document.querySelectorAll('[data-page-element="CheckoutProductCard/V2"]').forEach(function(c) {
       var n = c.querySelector('.elProductCardInfoName');
       if (!n) return;
-      if (n.textContent.toLowerCase().includes('t-shirt club')) return;
-      if (n.textContent.toLowerCase().includes('logo')) return;
-      if (n.textContent.toLowerCase().includes('name')) return;
+      var text = n.textContent.toLowerCase();
+      if (text.includes('t-shirt club')) return;
+      if (text.includes('front name & logo')) return;
+      if (text.includes('premium front logo')) return;
       var inp = c.querySelector('input.elProductCardInput');
       if (!inp) return;
       var key = n.textContent.trim();
@@ -152,22 +174,29 @@
   }
 
   function updateUI() {
-    var standardRows = findRowsByName('bowling talk t-shirt club');
-    var logoClubRows = findRowsByName('front name & logo');
-    var oneOffLogoRows = findRowsByName('premium front logo');
+    var standardRows = getStandardClubRows();
+    var logoClubRows = getLogoClubRows();
+    var oneOffLogoRows = getOneOffLogoRows();
     var clubSelected = isClubSelected();
     var logoClubSelected = isLogoClubSelected();
     var oneOffSelected = isOneOffSelected();
 
-    var pureStandardRows = standardRows.filter(function(r) {
-      var n = r.querySelector('.elProductCardInfoName');
-      return n && !n.textContent.toLowerCase().includes('front name') && !n.textContent.toLowerCase().includes('personalisation') && !n.textContent.toLowerCase().includes('want your');
-    });
+    // Front print selected — hide all logo add-ons, keep club visible
+    if (isFront) {
+      showRows(standardRows);
+      hideRows(logoClubRows);
+      hideRows(oneOffLogoRows);
+      clickMinus(logoClubRows);
+      clickMinus(oneOffLogoRows);
+      hideUpgradeHeader();
+      return;
+    }
 
+    // If both club products selected, remove standard
     if (logoClubSelected && clubSelected) {
-      clickMinus(pureStandardRows);
+      clickMinus(standardRows);
       setTimeout(function() {
-        hideRows(pureStandardRows);
+        hideRows(standardRows);
         showRows(logoClubRows);
         styleLogoClubRows();
         hideUpgradeHeader();
@@ -176,7 +205,7 @@
     }
 
     if (logoClubSelected) {
-      hideRows(pureStandardRows);
+      hideRows(standardRows);
       hideRows(oneOffLogoRows);
       showRows(logoClubRows);
       styleLogoClubRows();
@@ -185,7 +214,7 @@
     }
 
     if (clubSelected) {
-      showRows(pureStandardRows);
+      showRows(standardRows);
       showRows(logoClubRows);
       hideRows(oneOffLogoRows);
       styleStandardClubRows();
@@ -194,15 +223,17 @@
       return;
     }
 
-    if (oneOffSelected && !clubSelected && !logoClubSelected) {
-      showRows(pureStandardRows);
+    if (oneOffSelected) {
+      showRows(standardRows);
       hideRows(logoClubRows);
+      hideRows(oneOffLogoRows);
+      showRows(oneOffLogoRows);
       hideUpgradeHeader();
-      if (!isFront) showRows(oneOffLogoRows);
       return;
     }
 
-    showRows(pureStandardRows);
+    // Nothing selected
+    showRows(standardRows);
     hideRows(logoClubRows);
     hideRows(oneOffLogoRows);
     hideUpgradeHeader();
@@ -214,9 +245,11 @@
     document.querySelectorAll('[data-page-element="CheckoutProductCard/V2"]').forEach(function(c) {
       var n = c.querySelector('.elProductCardInfoName');
       if (!n) return;
-      if (n.textContent.toLowerCase().includes('t-shirt club')) return;
-      if (n.textContent.toLowerCase().includes('logo')) return;
-      if (n.textContent.toLowerCase().includes('name')) return;
+      var text = n.textContent.toLowerCase();
+      if (text.includes('t-shirt club')) return;
+      if (text.includes('front name & logo')) return;
+      if (text.includes('premium front logo')) return;
+      if (text.includes('want your')) return;
       var inp = c.querySelector('input.elProductCardInput');
       if (!inp) return;
       var key = n.textContent.trim();
@@ -257,18 +290,7 @@
         var h = document.getElementById('design_placement');
         if (h) h.value = val;
         isFront = (val === 'Front print');
-        if (isFront) {
-          var oneOffLogoRows = findRowsByName('premium front logo');
-          var logoClubRows = findRowsByName('front name & logo');
-          clickMinus(oneOffLogoRows);
-          clickMinus(logoClubRows);
-          setTimeout(function() {
-            hideRows(oneOffLogoRows);
-            hideRows(logoClubRows);
-          }, 1100);
-        } else {
-          updateUI();
-        }
+        updateUI();
         updateBanner();
       });
     });
