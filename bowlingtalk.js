@@ -58,9 +58,9 @@
       r.style.background = '#EEF4FF';
       r.style.borderLeft = '3px solid #378ADD';
       var n = r.querySelector('.elProductCardInfoName');
-      if (n) n.innerHTML = 'T-Shirt Club — Front Name & Logo <span style="background:#378ADD;color:white;font-size:10px;font-weight:bold;padding:2px 7px;border-radius:4px;margin-left:6px;vertical-align:middle;">UPGRADE</span>';
+      if (n) n.innerHTML = '🎳 BOWLING TALK T-SHIRT CLUB <span style="background:#378ADD;color:white;font-size:10px;font-weight:bold;padding:2px 7px;border-radius:4px;margin-left:6px;vertical-align:middle;">UPGRADE</span>';
       var desc = r.querySelector('.elProductCardInfoDescription');
-      if (desc) desc.textContent = 'Add your name + logo to the front of every monthly shirt — just $5 more!';
+      if (desc) desc.textContent = 'Get your first shirt for $17.95 - includes your name + logo on the front! Then just $34.95/month (plus s+h) for a new top voted design every month.';
       r.setAttribute('data-styled','1');
     });
   }
@@ -222,5 +222,5 @@
     attachRadioListeners();
     updateUI();
     updateBanner();
-  }, 1000);
+  }, 2000);
 })();
