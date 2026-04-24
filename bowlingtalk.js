@@ -1,4 +1,3 @@
-
 (function() {
   var isFront = false;
 
@@ -67,7 +66,7 @@
   }
 
   function isClubSelected() {
-    return getQty(findRowsByName('t-shirt club standard')) > 0;
+    return getQty(findRowsByName('bowling talk t-shirt club')) > 0;
   }
 
   function isLogoClubSelected() {
@@ -95,21 +94,19 @@
   }
 
   function updateUI() {
-    var standardRows = findRowsByName('t-shirt club standard');
+    var standardRows = findRowsByName('bowling talk t-shirt club');
     var logoClubRows = findRowsByName('front name & logo');
     var oneOffLogoRows = findRowsByName('premium front logo');
     var clubSelected = isClubSelected();
     var logoClubSelected = isLogoClubSelected();
     var oneOffSelected = isOneOffSelected();
 
-    // If both club products selected, remove standard
     if (clubSelected && logoClubSelected) {
       clickMinus(standardRows);
       clubSelected = false;
     }
 
     if (logoClubSelected) {
-      // Logo club selected — hide standard, hide one-off logo
       hideRows(standardRows);
       hideRows(oneOffLogoRows);
       showRows(logoClubRows);
@@ -118,7 +115,6 @@
     }
 
     if (clubSelected) {
-      // Standard club selected — ALWAYS show logo upgrade, hide one-off logo
       showRows(standardRows);
       showRows(logoClubRows);
       hideRows(oneOffLogoRows);
@@ -127,14 +123,12 @@
     }
 
     if (oneOffSelected && !clubSelected && !logoClubSelected) {
-      // One-off only — hide logo club, show one-off logo
       showRows(standardRows);
       hideRows(logoClubRows);
       if (!isFront) showRows(oneOffLogoRows);
       return;
     }
 
-    // Nothing selected — show standard club, hide logo club, hide one-off logo
     showRows(standardRows);
     hideRows(logoClubRows);
     hideRows(oneOffLogoRows);
