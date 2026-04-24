@@ -54,28 +54,6 @@
     });
   }
 
-  function addOneTimeHeader() {
-    if (oneTimeHeaderAdded) return;
-    var allCards = document.querySelectorAll('[data-page-element="CheckoutProductCard/V2"]');
-    var firstShirtRow = null;
-    allCards.forEach(function(c) {
-      var n = c.querySelector('.elProductCardInfoName');
-      if (!n) return;
-      var text = n.textContent.toLowerCase();
-      if (text.includes('t-shirt club')) return;
-      if (text.includes('front name & logo')) return;
-      if (text.includes('premium front logo')) return;
-      if (!firstShirtRow) firstShirtRow = c;
-    });
-    if (!firstShirtRow || !firstShirtRow.parentNode) return;
-    var header = document.createElement('div');
-    header.id = 'one-time-header';
-    header.style.cssText = 'text-align:center; padding:8px 16px; font-size:13px; font-weight:bold; color:#555; margin-top:8px;';
-    header.textContent = 'How about a one time order instead? 👇';
-    firstShirtRow.parentNode.insertBefore(header, firstShirtRow);
-    oneTimeHeaderAdded = true;
-  }
-
   function addUpgradeHeader() {
     var existing = document.getElementById('upgrade-header');
     if (existing) {
@@ -228,26 +206,19 @@
       return;
     }
 
-    if (logoClubSelected && clubSelected) {
-      clickMinusToZero(standardRows);
-      setTimeout(function() {
-        hideRows(standardRows);
-        showRows(logoClubRows);
-        styleLogoClubRows();
-        hideUpgradeHeader();
-      }, 1200);
-      return;
-    }
-
+    // Upgrade is selected — hide standard club regardless of anything else
     if (logoClubSelected) {
       hideRows(standardRows);
       hideRows(oneOffLogoRows);
       showRows(logoClubRows);
       styleLogoClubRows();
       hideUpgradeHeader();
+      // If standard club somehow got qty, reset it
+      if (clubSelected) clickMinusToZero(standardRows);
       return;
     }
 
+    // Standard club selected, no upgrade — show upgrade option
     if (clubSelected) {
       showRows(standardRows);
       showRows(logoClubRows);
@@ -258,6 +229,7 @@
       return;
     }
 
+    // One-off shirt selected, no club at all — show one-off logo
     if (oneOffSelected) {
       showRows(standardRows);
       hideRows(logoClubRows);
@@ -266,6 +238,7 @@
       return;
     }
 
+    // Nothing selected — show standard club, hide everything else
     showRows(standardRows);
     hideRows(logoClubRows);
     hideRows(oneOffLogoRows);
@@ -350,7 +323,6 @@
     attachRadioListeners();
     repositionUpgradeRow();
     styleStandardClubRows();
-    addOneTimeHeader();
     updateUI();
     updateBanner();
   }, 2000);
