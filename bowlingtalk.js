@@ -54,14 +54,12 @@
 
   function styleLogoClubRows() {
     findRowsByName('front name & logo').forEach(function(r) {
-      if (r.getAttribute('data-styled')) return;
       r.style.background = '#EEF4FF';
       r.style.borderLeft = '3px solid #378ADD';
       var n = r.querySelector('.elProductCardInfoName');
       if (n) n.innerHTML = '🎳 BOWLING TALK T-SHIRT CLUB <span style="background:#378ADD;color:white;font-size:10px;font-weight:bold;padding:2px 7px;border-radius:4px;margin-left:6px;vertical-align:middle;">UPGRADE</span>';
       var desc = r.querySelector('.elProductCardInfoDescription');
       if (desc) desc.textContent = 'Get your first shirt for $17.95 - includes your name + logo on the front! Then just $34.95/month (plus s+h) for a new top voted design every month.';
-      r.setAttribute('data-styled','1');
     });
   }
 
