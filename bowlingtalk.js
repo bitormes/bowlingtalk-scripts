@@ -181,7 +181,6 @@
     var logoClubSelected = isLogoClubSelected();
     var oneOffSelected = isOneOffSelected();
 
-    // Front print — reset and hide all logo add-ons, keep club visible
     if (isFront) {
       showRows(standardRows);
       styleStandardClubRows();
@@ -195,7 +194,6 @@
       return;
     }
 
-    // If both club products selected, remove standard
     if (logoClubSelected && clubSelected) {
       clickMinus(standardRows);
       setTimeout(function() {
@@ -234,7 +232,6 @@
       return;
     }
 
-    // Nothing selected
     showRows(standardRows);
     hideRows(logoClubRows);
     hideRows(oneOffLogoRows);
@@ -318,6 +315,7 @@
   setTimeout(function() {
     attachRadioListeners();
     repositionUpgradeRow();
+    styleStandardClubRows();
     updateUI();
     updateBanner();
   }, 2000);
