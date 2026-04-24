@@ -25,7 +25,7 @@
     return q;
   }
 
-  function clickMinus(rows) {
+  function clickMinusToZero(rows) {
     rows.forEach(function(r) {
       var inp = r.querySelector('input.elProductCardInput');
       if (!inp) return;
@@ -37,7 +37,7 @@
         if (current <= 0 || clicks >= 10) { clearInterval(interval); return; }
         minus.click();
         clicks++;
-      }, 100);
+      }, 80);
     });
   }
 
@@ -173,6 +173,33 @@
     return q > 0;
   }
 
+  function applyFrontPrintState() {
+    var standardRows = getStandardClubRows();
+    var logoClubRows = getLogoClubRows();
+    var oneOffLogoRows = getOneOffLogoRows();
+
+    // Immediately hide logo rows visually
+    hideRows(logoClubRows);
+    hideRows(oneOffLogoRows);
+    hideUpgradeHeader();
+
+    // Show and style standard club
+    showRows(standardRows);
+    styleStandardClubRows();
+
+    // Reset quantities via minus clicks
+    clickMinusToZero(logoClubRows);
+    clickMinusToZero(oneOffLogoRows);
+
+    // Double check after delay to make sure CF2.0 hasn't restored them
+    setTimeout(function() {
+      hideRows(logoClubRows);
+      hideRows(oneOffLogoRows);
+      clickMinusToZero(logoClubRows);
+      clickMinusToZero(oneOffLogoRows);
+    }, 1500);
+  }
+
   function updateUI() {
     var standardRows = getStandardClubRows();
     var logoClubRows = getLogoClubRows();
@@ -182,20 +209,12 @@
     var oneOffSelected = isOneOffSelected();
 
     if (isFront) {
-      showRows(standardRows);
-      styleStandardClubRows();
-      clickMinus(logoClubRows);
-      clickMinus(oneOffLogoRows);
-      setTimeout(function() {
-        hideRows(logoClubRows);
-        hideRows(oneOffLogoRows);
-        hideUpgradeHeader();
-      }, 1200);
+      applyFrontPrintState();
       return;
     }
 
     if (logoClubSelected && clubSelected) {
-      clickMinus(standardRows);
+      clickMinusToZero(standardRows);
       setTimeout(function() {
         hideRows(standardRows);
         showRows(logoClubRows);
