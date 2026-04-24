@@ -1,6 +1,7 @@
 (function() {
   var isFront = false;
   var repositioned = false;
+  var oneTimeHeaderAdded = false;
 
   function findRowsByName(nameFragment) {
     var result = [];
@@ -51,6 +52,28 @@
     rows.forEach(function(r) {
       r.style.removeProperty('display');
     });
+  }
+
+  function addOneTimeHeader() {
+    if (oneTimeHeaderAdded) return;
+    var allCards = document.querySelectorAll('[data-page-element="CheckoutProductCard/V2"]');
+    var firstShirtRow = null;
+    allCards.forEach(function(c) {
+      var n = c.querySelector('.elProductCardInfoName');
+      if (!n) return;
+      var text = n.textContent.toLowerCase();
+      if (text.includes('t-shirt club')) return;
+      if (text.includes('front name & logo')) return;
+      if (text.includes('premium front logo')) return;
+      if (!firstShirtRow) firstShirtRow = c;
+    });
+    if (!firstShirtRow || !firstShirtRow.parentNode) return;
+    var header = document.createElement('div');
+    header.id = 'one-time-header';
+    header.style.cssText = 'text-align:center; padding:8px 16px; font-size:13px; font-weight:bold; color:#555; margin-top:8px;';
+    header.textContent = 'How about a one time order instead? 👇';
+    firstShirtRow.parentNode.insertBefore(header, firstShirtRow);
+    oneTimeHeaderAdded = true;
   }
 
   function addUpgradeHeader() {
@@ -177,21 +200,13 @@
     var standardRows = getStandardClubRows();
     var logoClubRows = getLogoClubRows();
     var oneOffLogoRows = getOneOffLogoRows();
-
-    // Immediately hide logo rows visually
     hideRows(logoClubRows);
     hideRows(oneOffLogoRows);
     hideUpgradeHeader();
-
-    // Show and style standard club
     showRows(standardRows);
     styleStandardClubRows();
-
-    // Reset quantities via minus clicks
     clickMinusToZero(logoClubRows);
     clickMinusToZero(oneOffLogoRows);
-
-    // Double check after delay to make sure CF2.0 hasn't restored them
     setTimeout(function() {
       hideRows(logoClubRows);
       hideRows(oneOffLogoRows);
@@ -335,6 +350,7 @@
     attachRadioListeners();
     repositionUpgradeRow();
     styleStandardClubRows();
+    addOneTimeHeader();
     updateUI();
     updateBanner();
   }, 2000);
