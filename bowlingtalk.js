@@ -1,7 +1,6 @@
 (function() {
   var isFront = false;
   var repositioned = false;
-  var oneTimeHeaderAdded = false;
 
   function findRowsByName(nameFragment) {
     var result = [];
@@ -54,13 +53,40 @@
     });
   }
 
+  // Tag all rows on first load so we can always find them
+  function tagAllRows() {
+    document.querySelectorAll('[data-page-element="CheckoutProductCard/V2"]').forEach(function(c) {
+      if (c.getAttribute('data-row-type')) return;
+      var n = c.querySelector('.elProductCardInfoName');
+      if (!n) return;
+      var text = n.textContent.toLowerCase();
+      if (text.includes('front name & logo')) {
+        c.setAttribute('data-row-type', 'logo-club');
+      } else if (text.includes('bowling talk t-shirt club')) {
+        c.setAttribute('data-row-type', 'standard-club');
+      } else if (text.includes('premium front logo')) {
+        c.setAttribute('data-row-type', 'one-off-logo');
+      } else {
+        c.setAttribute('data-row-type', 'shirt');
+      }
+    });
+  }
+
+  function getRowsByType(type) {
+    var result = [];
+    document.querySelectorAll('[data-page-element="CheckoutProductCard/V2"][data-row-type="' + type + '"]').forEach(function(c) {
+      result.push(c);
+    });
+    return result;
+  }
+
   function addUpgradeHeader() {
     var existing = document.getElementById('upgrade-header');
     if (existing) {
       existing.style.removeProperty('display');
       return;
     }
-    var logoClubRows = findRowsByName('front name & logo');
+    var logoClubRows = getRowsByType('logo-club');
     if (!logoClubRows.length) return;
     var firstRow = logoClubRows[0];
     if (!firstRow.parentNode) return;
@@ -78,38 +104,28 @@
 
   function repositionUpgradeRow() {
     if (repositioned) return;
-    var allCards = document.querySelectorAll('[data-page-element="CheckoutProductCard/V2"]');
-    var standardRow = null;
-    var upgradeRow = null;
-    allCards.forEach(function(c) {
-      var n = c.querySelector('.elProductCardInfoName');
-      if (!n) return;
-      if (n.textContent.toLowerCase().includes('bowling talk t-shirt club') && !n.textContent.toLowerCase().includes('front name')) {
-        if (!standardRow) standardRow = c;
-      }
-      if (n.textContent.toLowerCase().includes('front name & logo')) {
-        if (!upgradeRow) upgradeRow = c;
-      }
-    });
-    if (standardRow && upgradeRow && standardRow.parentNode) {
+    var standardRows = getRowsByType('standard-club');
+    var upgradeRows = getRowsByType('logo-club');
+    if (!standardRows.length || !upgradeRows.length) return;
+    var standardRow = standardRows[0];
+    var upgradeRow = upgradeRows[0];
+    if (standardRow.parentNode) {
       standardRow.parentNode.insertBefore(upgradeRow, standardRow.nextSibling);
       repositioned = true;
     }
   }
 
   function styleStandardClubRows() {
-    document.querySelectorAll('[data-page-element="CheckoutProductCard/V2"]').forEach(function(r) {
+    getRowsByType('standard-club').forEach(function(r) {
       var n = r.querySelector('.elProductCardInfoName');
       if (!n) return;
-      var text = n.textContent.toLowerCase();
-      if (!text.includes('bowling talk t-shirt club')) return;
-      if (text.includes('front name')) return;
+      if (n.innerHTML.includes('MOST POPULAR')) return;
       n.innerHTML = 'BOWLING TALK T-SHIRT CLUB <span style="background:#378ADD;color:white;font-size:10px;font-weight:bold;padding:2px 8px;border-radius:4px;margin-left:6px;vertical-align:middle;">MOST POPULAR</span>';
     });
   }
 
   function styleLogoClubRows() {
-    findRowsByName('front name & logo').forEach(function(r) {
+    getRowsByType('logo-club').forEach(function(r) {
       r.style.background = '#FFD580';
       r.style.borderLeft = '3px solid #C47D0E';
       var n = r.querySelector('.elProductCardInfoName');
@@ -124,60 +140,22 @@
     });
   }
 
-  function getStandardClubRows() {
-    var result = [];
-    document.querySelectorAll('[data-page-element="CheckoutProductCard/V2"]').forEach(function(c) {
-      var n = c.querySelector('.elProductCardInfoName');
-      if (!n) return;
-      var text = n.textContent.toLowerCase();
-      if (text.includes('bowling talk t-shirt club') && !text.includes('front name')) {
-        result.push(c);
-      }
-    });
-    return result;
-  }
-
-  function getLogoClubRows() {
-    return findRowsByName('front name & logo');
-  }
-
-  function getOneOffLogoRows() {
-    return findRowsByName('premium front logo');
-  }
-
   function isClubSelected() {
-    return getQty(getStandardClubRows()) > 0;
+    return getQty(getRowsByType('standard-club')) > 0;
   }
 
   function isLogoClubSelected() {
-    return getQty(getLogoClubRows()) > 0;
+    return getQty(getRowsByType('logo-club')) > 0;
   }
 
   function isOneOffSelected() {
-    var q = 0;
-    var seen = [];
-    document.querySelectorAll('[data-page-element="CheckoutProductCard/V2"]').forEach(function(c) {
-      var n = c.querySelector('.elProductCardInfoName');
-      if (!n) return;
-      var text = n.textContent.toLowerCase();
-      if (text.includes('t-shirt club')) return;
-      if (text.includes('front name & logo')) return;
-      if (text.includes('premium front logo')) return;
-      var inp = c.querySelector('input.elProductCardInput');
-      if (!inp) return;
-      var key = n.textContent.trim();
-      if (seen.indexOf(key) === -1) {
-        seen.push(key);
-        q += parseInt(inp.value) || 0;
-      }
-    });
-    return q > 0;
+    return getQty(getRowsByType('shirt')) > 0;
   }
 
   function applyFrontPrintState() {
-    var standardRows = getStandardClubRows();
-    var logoClubRows = getLogoClubRows();
-    var oneOffLogoRows = getOneOffLogoRows();
+    var standardRows = getRowsByType('standard-club');
+    var logoClubRows = getRowsByType('logo-club');
+    var oneOffLogoRows = getRowsByType('one-off-logo');
     hideRows(logoClubRows);
     hideRows(oneOffLogoRows);
     hideUpgradeHeader();
@@ -194,9 +172,9 @@
   }
 
   function updateUI() {
-    var standardRows = getStandardClubRows();
-    var logoClubRows = getLogoClubRows();
-    var oneOffLogoRows = getOneOffLogoRows();
+    var standardRows = getRowsByType('standard-club');
+    var logoClubRows = getRowsByType('logo-club');
+    var oneOffLogoRows = getRowsByType('one-off-logo');
     var clubSelected = isClubSelected();
     var logoClubSelected = isLogoClubSelected();
     var oneOffSelected = isOneOffSelected();
@@ -206,19 +184,18 @@
       return;
     }
 
-    // Upgrade is selected — hide standard club regardless of anything else
+    // Upgrade selected — hide standard club, hide one-off logo
     if (logoClubSelected) {
       hideRows(standardRows);
       hideRows(oneOffLogoRows);
       showRows(logoClubRows);
       styleLogoClubRows();
       hideUpgradeHeader();
-      // If standard club somehow got qty, reset it
       if (clubSelected) clickMinusToZero(standardRows);
       return;
     }
 
-    // Standard club selected, no upgrade — show upgrade option
+    // Standard club selected — show upgrade option below
     if (clubSelected) {
       showRows(standardRows);
       showRows(logoClubRows);
@@ -229,7 +206,7 @@
       return;
     }
 
-    // One-off shirt selected, no club at all — show one-off logo
+    // One-off shirt selected, no club — show one-off logo
     if (oneOffSelected) {
       showRows(standardRows);
       hideRows(logoClubRows);
@@ -238,7 +215,7 @@
       return;
     }
 
-    // Nothing selected — show standard club, hide everything else
+    // Nothing selected
     showRows(standardRows);
     hideRows(logoClubRows);
     hideRows(oneOffLogoRows);
@@ -248,13 +225,9 @@
   function shirtQty() {
     var q = 0;
     var seen = [];
-    document.querySelectorAll('[data-page-element="CheckoutProductCard/V2"]').forEach(function(c) {
+    getRowsByType('shirt').forEach(function(c) {
       var n = c.querySelector('.elProductCardInfoName');
       if (!n) return;
-      var text = n.textContent.toLowerCase();
-      if (text.includes('t-shirt club')) return;
-      if (text.includes('front name & logo')) return;
-      if (text.includes('premium front logo')) return;
       var inp = c.querySelector('input.elProductCardInput');
       if (!inp) return;
       var key = n.textContent.trim();
@@ -320,6 +293,7 @@
   });
 
   setTimeout(function() {
+    tagAllRows();
     attachRadioListeners();
     repositionUpgradeRow();
     styleStandardClubRows();
