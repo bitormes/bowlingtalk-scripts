@@ -102,6 +102,7 @@
       if (!n) return;
       if (n.textContent.toLowerCase().includes('front name')) return;
       if (n.textContent.toLowerCase().includes('personalisation')) return;
+      if (n.textContent.toLowerCase().includes('want your')) return;
       n.innerHTML = 'BOWLING TALK T-SHIRT CLUB <span style="background:#378ADD;color:white;font-size:10px;font-weight:bold;padding:2px 8px;border-radius:4px;margin-left:6px;vertical-align:middle;">MOST POPULAR</span>';
     });
   }
@@ -111,7 +112,7 @@
       r.style.background = '#FFD580';
       r.style.borderLeft = '3px solid #C47D0E';
       var n = r.querySelector('.elProductCardInfoName');
-      if (n) n.innerHTML = '👑 BOWLING TALK PERSONALISED T-SHIRT CLUB';
+      if (n) n.innerHTML = '👑 WANT YOUR NAME ON THE FRONT?';
       var desc = r.querySelector('.elProductCardInfoDescription');
       if (desc) {
         desc.textContent = 'Go personalised for $17.95 - includes your name + logo on the front! Then just $34.95/month (plus s+h) for a new top voted design every month.';
@@ -160,7 +161,7 @@
 
     var pureStandardRows = standardRows.filter(function(r) {
       var n = r.querySelector('.elProductCardInfoName');
-      return n && !n.textContent.toLowerCase().includes('front name') && !n.textContent.toLowerCase().includes('personalisation');
+      return n && !n.textContent.toLowerCase().includes('front name') && !n.textContent.toLowerCase().includes('personalisation') && !n.textContent.toLowerCase().includes('want your');
     });
 
     if (logoClubSelected && clubSelected) {
