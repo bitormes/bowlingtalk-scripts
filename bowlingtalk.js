@@ -96,12 +96,23 @@
     }
   }
 
+  function styleStandardClubRows() {
+    findRowsByName('bowling talk t-shirt club').forEach(function(r) {
+      var n = r.querySelector('.elProductCardInfoName');
+      if (!n) return;
+      if (n.textContent.toLowerCase().includes('front name')) return;
+      if (r.getAttribute('data-standard-styled')) return;
+      n.innerHTML = 'BOWLING TALK T-SHIRT CLUB <span style="background:#378ADD;color:white;font-size:10px;font-weight:bold;padding:2px 8px;border-radius:4px;margin-left:6px;vertical-align:middle;">MOST POPULAR</span>';
+      r.setAttribute('data-standard-styled','1');
+    });
+  }
+
   function styleLogoClubRows() {
     findRowsByName('front name & logo').forEach(function(r) {
-      r.style.background = '#F5A623';
+      r.style.background = '#F3B54A';
       r.style.borderLeft = '3px solid #C47D0E';
       var n = r.querySelector('.elProductCardInfoName');
-      if (n) n.innerHTML = '👑 BOWLING TALK T-SHIRT CLUB <span style="background:#7D4E00;color:#FFF8ED;font-size:10px;font-weight:bold;padding:2px 8px;border-radius:4px;margin-left:6px;vertical-align:middle;">MOST POPULAR</span>';
+      if (n) n.innerHTML = '👑 BOWLING TALK T-SHIRT CLUB PERSONALISATION';
       var desc = r.querySelector('.elProductCardInfoDescription');
       if (desc) {
         desc.textContent = 'Get your first shirt for $17.95 - includes your name + logo on the front! Then just $34.95/month (plus s+h) for a new top voted design every month.';
@@ -148,13 +159,24 @@
     var logoClubSelected = isLogoClubSelected();
     var oneOffSelected = isOneOffSelected();
 
-    if (clubSelected && logoClubSelected) {
-      clickMinus(standardRows);
-      clubSelected = false;
+    var pureStandardRows = standardRows.filter(function(r) {
+      var n = r.querySelector('.elProductCardInfoName');
+      return n && !n.textContent.toLowerCase().includes('front name');
+    });
+
+    if (logoClubSelected && clubSelected) {
+      clickMinus(pureStandardRows);
+      setTimeout(function() {
+        hideRows(pureStandardRows);
+        showRows(logoClubRows);
+        styleLogoClubRows();
+        hideUpgradeHeader();
+      }, 1200);
+      return;
     }
 
     if (logoClubSelected) {
-      hideRows(standardRows);
+      hideRows(pureStandardRows);
       hideRows(oneOffLogoRows);
       showRows(logoClubRows);
       styleLogoClubRows();
@@ -163,23 +185,24 @@
     }
 
     if (clubSelected) {
-      showRows(standardRows);
+      showRows(pureStandardRows);
       showRows(logoClubRows);
       hideRows(oneOffLogoRows);
+      styleStandardClubRows();
       styleLogoClubRows();
       addUpgradeHeader();
       return;
     }
 
     if (oneOffSelected && !clubSelected && !logoClubSelected) {
-      showRows(standardRows);
+      showRows(pureStandardRows);
       hideRows(logoClubRows);
       hideUpgradeHeader();
       if (!isFront) showRows(oneOffLogoRows);
       return;
     }
 
-    showRows(standardRows);
+    showRows(pureStandardRows);
     hideRows(logoClubRows);
     hideRows(oneOffLogoRows);
     hideUpgradeHeader();
