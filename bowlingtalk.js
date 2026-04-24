@@ -53,6 +53,19 @@
     });
   }
 
+  function addUpgradeHeader() {
+    if (document.getElementById('upgrade-header')) return;
+    var logoClubRows = findRowsByName('front name & logo');
+    if (!logoClubRows.length) return;
+    var firstRow = logoClubRows[0];
+    if (!firstRow.parentNode) return;
+    var header = document.createElement('div');
+    header.id = 'upgrade-header';
+    header.style.cssText = 'text-align:center; padding:8px 16px; font-size:13px; font-weight:bold; color:#555; margin-top:4px;';
+    header.textContent = 'Want to personalise your shirt? Upgrade below 👇';
+    firstRow.parentNode.insertBefore(header, firstRow);
+  }
+
   function repositionUpgradeRow() {
     if (repositioned) return;
     var allCards = document.querySelectorAll('[data-page-element="CheckoutProductCard/V2"]');
@@ -79,7 +92,7 @@
       r.style.background = '#EEF4FF';
       r.style.borderLeft = '3px solid #378ADD';
       var n = r.querySelector('.elProductCardInfoName');
-      if (n) n.innerHTML = '🎳 BOWLING TALK T-SHIRT CLUB <span style="background:#378ADD;color:white;font-size:10px;font-weight:bold;padding:2px 7px;border-radius:4px;margin-left:6px;vertical-align:middle;">UPGRADE</span>';
+      if (n) n.innerHTML = '👑 BOWLING TALK T-SHIRT CLUB <span style="background:#F5A623;color:#7D4E00;font-size:10px;font-weight:bold;padding:2px 8px;border-radius:4px;margin-left:6px;vertical-align:middle;">MOST POPULAR</span>';
       var desc = r.querySelector('.elProductCardInfoDescription');
       if (desc) desc.textContent = 'Get your first shirt for $17.95 - includes your name + logo on the front! Then just $34.95/month (plus s+h) for a new top voted design every month.';
     });
@@ -131,6 +144,8 @@
       hideRows(oneOffLogoRows);
       showRows(logoClubRows);
       styleLogoClubRows();
+      var header = document.getElementById('upgrade-header');
+      if (header) header.style.setProperty('display','none','important');
       return;
     }
 
@@ -139,12 +154,17 @@
       showRows(logoClubRows);
       hideRows(oneOffLogoRows);
       styleLogoClubRows();
+      addUpgradeHeader();
+      var header = document.getElementById('upgrade-header');
+      if (header) header.style.removeProperty('display');
       return;
     }
 
     if (oneOffSelected && !clubSelected && !logoClubSelected) {
       showRows(standardRows);
       hideRows(logoClubRows);
+      var header = document.getElementById('upgrade-header');
+      if (header) header.style.setProperty('display','none','important');
       if (!isFront) showRows(oneOffLogoRows);
       return;
     }
@@ -152,6 +172,8 @@
     showRows(standardRows);
     hideRows(logoClubRows);
     hideRows(oneOffLogoRows);
+    var header = document.getElementById('upgrade-header');
+    if (header) header.style.setProperty('display','none','important');
   }
 
   function shirtQty() {
