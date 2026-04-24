@@ -181,14 +181,17 @@
     var logoClubSelected = isLogoClubSelected();
     var oneOffSelected = isOneOffSelected();
 
-    // Front print selected — hide all logo add-ons, keep club visible
+    // Front print — reset and hide all logo add-ons, keep club visible
     if (isFront) {
       showRows(standardRows);
-      hideRows(logoClubRows);
-      hideRows(oneOffLogoRows);
+      styleStandardClubRows();
       clickMinus(logoClubRows);
       clickMinus(oneOffLogoRows);
-      hideUpgradeHeader();
+      setTimeout(function() {
+        hideRows(logoClubRows);
+        hideRows(oneOffLogoRows);
+        hideUpgradeHeader();
+      }, 1200);
       return;
     }
 
@@ -226,7 +229,6 @@
     if (oneOffSelected) {
       showRows(standardRows);
       hideRows(logoClubRows);
-      hideRows(oneOffLogoRows);
       showRows(oneOffLogoRows);
       hideUpgradeHeader();
       return;
@@ -249,7 +251,6 @@
       if (text.includes('t-shirt club')) return;
       if (text.includes('front name & logo')) return;
       if (text.includes('premium front logo')) return;
-      if (text.includes('want your')) return;
       var inp = c.querySelector('input.elProductCardInput');
       if (!inp) return;
       var key = n.textContent.trim();
