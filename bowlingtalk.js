@@ -1,5 +1,6 @@
 (function() {
   var isFront = false;
+  var repositioned = false;
 
   function findRowsByName(nameFragment) {
     var result = [];
@@ -50,6 +51,27 @@
     rows.forEach(function(r) {
       r.style.removeProperty('display');
     });
+  }
+
+  function repositionUpgradeRow() {
+    if (repositioned) return;
+    var allCards = document.querySelectorAll('[data-page-element="CheckoutProductCard/V2"]');
+    var standardRow = null;
+    var upgradeRow = null;
+    allCards.forEach(function(c) {
+      var n = c.querySelector('.elProductCardInfoName');
+      if (!n) return;
+      if (n.textContent.toLowerCase().includes('bowling talk t-shirt club') && !n.textContent.toLowerCase().includes('front name')) {
+        if (!standardRow) standardRow = c;
+      }
+      if (n.textContent.toLowerCase().includes('front name & logo')) {
+        if (!upgradeRow) upgradeRow = c;
+      }
+    });
+    if (standardRow && upgradeRow && standardRow.parentNode) {
+      standardRow.parentNode.insertBefore(upgradeRow, standardRow.nextSibling);
+      repositioned = true;
+    }
   }
 
   function styleLogoClubRows() {
@@ -218,6 +240,7 @@
 
   setTimeout(function() {
     attachRadioListeners();
+    repositionUpgradeRow();
     updateUI();
     updateBanner();
   }, 2000);
