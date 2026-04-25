@@ -128,7 +128,7 @@
       r.style.background = '#FFD580';
       r.style.borderLeft = '3px solid #C47D0E';
       var n = r.querySelector('.elProductCardInfoName');
-      if (n) n.innerHTML = '&#x2B06;&#xFE0F; UPGRADE - Add Your Name & Logo to the Front';
+      if (n) n.innerHTML = '&#x27A1;&#xFE0F; UPGRADE - Add Your Name & Logo to the Front';
       var desc = r.querySelector('.elProductCardInfoDescription');
       if (desc) {
         desc.textContent = 'Upgrade your club and get this t-shirt personalised for just $17.95, and then receive a top voted t-shirt every month for just $34.95 (plus s+h).';
