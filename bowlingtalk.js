@@ -53,7 +53,6 @@
     });
   }
 
-  // Tag all rows on first load so we can always find them
   function tagAllRows() {
     document.querySelectorAll('[data-page-element="CheckoutProductCard/V2"]').forEach(function(c) {
       if (c.getAttribute('data-row-type')) return;
@@ -129,10 +128,10 @@
       r.style.background = '#FFD580';
       r.style.borderLeft = '3px solid #C47D0E';
       var n = r.querySelector('.elProductCardInfoName');
-      if (n) n.innerHTML = '&#x27A1;&#xFE0F; WANT YOUR NAME ON THE FRONT?';
+      if (n) n.innerHTML = '&#x2B06;&#xFE0F; UPGRADE - Add Your Name & Logo to the Front';
       var desc = r.querySelector('.elProductCardInfoDescription');
       if (desc) {
-        desc.textContent = 'Go personalised for $17.95 - includes your name + logo on the front! Then just $34.95/month (plus s+h) for a new top voted design every month.';
+        desc.textContent = 'Selecting this replaces your standard club membership with this personalised version — same great monthly shirt, just with your name + logo added! Go personalised for $17.95, then just $34.95/month (plus s+h).';
         desc.style.color = '#3D2800';
       }
       var price = r.querySelector('.elProductCardFinalPrice');
@@ -184,7 +183,6 @@
       return;
     }
 
-    // Upgrade selected — hide standard club, hide one-off logo
     if (logoClubSelected) {
       hideRows(standardRows);
       hideRows(oneOffLogoRows);
@@ -195,7 +193,6 @@
       return;
     }
 
-    // Standard club selected — show upgrade option below
     if (clubSelected) {
       showRows(standardRows);
       showRows(logoClubRows);
@@ -206,7 +203,6 @@
       return;
     }
 
-    // One-off shirt selected, no club — show one-off logo
     if (oneOffSelected) {
       showRows(standardRows);
       hideRows(logoClubRows);
@@ -215,7 +211,6 @@
       return;
     }
 
-    // Nothing selected
     showRows(standardRows);
     hideRows(logoClubRows);
     hideRows(oneOffLogoRows);
