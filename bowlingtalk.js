@@ -186,6 +186,7 @@
     if (logoClubSelected) {
       hideRows(standardRows);
       hideRows(oneOffLogoRows);
+      clickMinusToZero(oneOffLogoRows);
       showRows(logoClubRows);
       styleLogoClubRows();
       hideUpgradeHeader();
@@ -197,6 +198,7 @@
       showRows(standardRows);
       showRows(logoClubRows);
       hideRows(oneOffLogoRows);
+      clickMinusToZero(oneOffLogoRows);
       styleStandardClubRows();
       styleLogoClubRows();
       addUpgradeHeader();
