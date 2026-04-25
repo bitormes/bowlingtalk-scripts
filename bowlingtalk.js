@@ -131,7 +131,7 @@
       if (n) n.innerHTML = '&#x2B06;&#xFE0F; UPGRADE - Add Your Name & Logo to the Front';
       var desc = r.querySelector('.elProductCardInfoDescription');
       if (desc) {
-        desc.textContent = 'Selecting this replaces your standard club membership with a personalised version - Go personalised for $17.95, then just $34.95/month (plus s+h).';
+        desc.textContent = 'Upgrade your club and get this t-shirt personalised for just $17.95, and then receive a top voted t-shirt every month for just $34.95 (plus s+h).';
         desc.style.color = '#3D2800';
       }
       var price = r.querySelector('.elProductCardFinalPrice');
