@@ -265,6 +265,7 @@
         var h = document.getElementById('design_placement');
         if (h) h.value = val;
         isFront = (val === 'Front print');
+        sessionStorage.setItem('bt_design_placement', val);
         updateUI();
         updateBanner();
       });
@@ -296,5 +297,9 @@
     styleStandardClubRows();
     updateUI();
     updateBanner();
+    // Default placement to Back print if not already set
+    if (!sessionStorage.getItem('bt_design_placement')) {
+      sessionStorage.setItem('bt_design_placement', 'Back print');
+    }
   }, 2000);
 })();
