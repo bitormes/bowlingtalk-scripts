@@ -257,9 +257,9 @@
     badge.textContent=q+' '+w;
   }
 
-  function updateDesignPlacementDropdown(val) {
-    var dropdown = document.querySelector('[name="Design_Placement"]');
-    if (dropdown) dropdown.value = val;
+  function updateDesignPlacementField(val) {
+    var field = document.querySelector('textarea[data-custom-type="Design_Placement"]');
+    if (field) field.value = val;
   }
 
   function attachRadioListeners() {
@@ -271,7 +271,7 @@
         if (h) h.value = val;
         isFront = (val === 'Front print');
         sessionStorage.setItem('bt_design_placement', val);
-        updateDesignPlacementDropdown(val);
+        updateDesignPlacementField(val);
         updateUI();
         updateBanner();
       });
@@ -306,6 +306,6 @@
     if (!sessionStorage.getItem('bt_design_placement')) {
       sessionStorage.setItem('bt_design_placement', 'Back print');
     }
-    updateDesignPlacementDropdown(sessionStorage.getItem('bt_design_placement') || 'Back print');
+    updateDesignPlacementField(sessionStorage.getItem('bt_design_placement') || 'Back print');
   }, 2000);
 })();
