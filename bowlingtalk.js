@@ -259,7 +259,11 @@
 
   function updateDesignPlacementField(val) {
     var field = document.querySelector('textarea[data-custom-type="Design_Placement"]');
-    if (field) field.value = val;
+    if (field) {
+      field.value = val;
+      field.dispatchEvent(new Event('input', { bubbles: true }));
+      field.dispatchEvent(new Event('change', { bubbles: true }));
+    }
   }
 
   function attachRadioListeners() {
